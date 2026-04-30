@@ -110,8 +110,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           </div>
         </header>
 
-        <div className="flex gap-12">
-          <div className="prose prose-lg dark:prose-invert max-w-none flex-1 min-w-0">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+          <div className="prose prose-lg dark:prose-invert max-w-none flex-1 min-w-0 overflow-hidden">
             <MDXRemote
               source={post.content}
               options={{
@@ -124,7 +124,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           </div>
 
           {toc.length > 0 && (
-            <aside className="w-56 flex-shrink-0">
+            <aside className="hidden lg:block w-56 flex-shrink-0">
               <TableOfContents items={toc} />
             </aside>
           )}

@@ -25,3 +25,29 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.prose pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.prose img {
+  border-radius: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .prose {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .prose h1 {
+    font-size: 1.75rem;
+  }
+  .prose h2 {
+    font-size: 1.4rem;
+  }
+  .prose table {
+    display: block;
+    overflow-x: auto;
+  }
+}
