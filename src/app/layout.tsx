@@ -4,6 +4,7 @@ import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
+import { ScrollToTop } from '@/components/ui/ScrollToTop';
 import { siteConfig } from '@/lib/config';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -45,6 +46,7 @@ export default function RootLayout({
           <div className="min-h-screen flex flex-col">
             <Header />
             <main className="flex-1">{children}</main>
+            <ScrollToTop />
             <Footer />
           </div>
         </ThemeProvider>

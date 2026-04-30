@@ -6,12 +6,15 @@ import { ReadingProgressBar } from '@/components/blog/ReadingProgressBar';
 import { TableOfContents } from '@/components/blog/TableOfContents';
 import { PostDetailClient } from '@/components/blog/PostDetailClient';
 import { RelatedPosts } from '@/components/blog/RelatedPosts';
+import { PostNavigation } from '@/components/blog/PostNavigation';
 import { ViewCount } from '@/components/blog/ViewCount';
 import { JsonLd } from '@/components/blog/JsonLd';
+import { ShareButtons } from '@/components/blog/ShareButtons';
 import Link from 'next/link';
 import Image from 'next/image';
 import remarkGfm from 'remark-gfm';
 import rehypeChineseSlug from '@/lib/rehype-chinese-slug';
+import rehypeCodeCopy from '@/lib/rehype-code-copy';
 
 export async function generateStaticParams() {
   const posts = await getPosts();
@@ -55,6 +58,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
   const toc = extractToc(post.content);
   const allPosts = await getPosts();
+  const currentIndex = allPosts.findIndex((p) => p.slug === slug);
+  const prev = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : undefined;
+  const next = currentIndex > 0 ? allPosts[currentIndex - 1] : undefined;
 
   return (
     <>
@@ -99,6 +105,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               </Link>
             ))}
           </div>
+          <div className="mt-4">
+            <ShareButtons title={post.title} slug={post.slug} />
+          </div>
         </header>
 
         <div className="flex gap-12">
@@ -108,20 +117,22 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               options={{
                 mdxOptions: {
                   remarkPlugins: [remarkGfm],
-                  rehypePlugins: [rehypeChineseSlug],
+                  rehypePlugins: [rehypeChineseSlug, rehypeCodeCopy],
                 },
               }}
             />
           </div>
 
           {toc.length > 0 && (
-            <aside className="hidden lg:block w-56 flex-shrink-0">
+            <aside className="w-56 flex-shrink-0">
               <TableOfContents items={toc} />
             </aside>
           )}
         </div>
 
         <PostDetailClient slug={post.slug} content={post.content} title={post.title} />
+
+        <PostNavigation prev={prev} next={next} />
 
         <RelatedPosts currentSlug={post.slug} posts={allPosts} />
       </article>
