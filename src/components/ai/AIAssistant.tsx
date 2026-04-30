@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { polishArticle, generateSummary, generateSEODescription, extractKeywords, suggestTitles } from '@/lib/ai/client';
 import { cn } from '@/lib/utils';
 
 interface AIAssistantProps {
@@ -15,6 +14,17 @@ interface AIResult {
   content: string;
 }
 
+async function callAIHelper(model: string, prompt: string, temperature = 0.7): Promise<string> {
+  const res = await fetch('/api/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model, prompt, temperature }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'AI request failed');
+  return data.content;
+}
+
 export function AIAssistant({ content, title }: AIAssistantProps) {
   const [loading, setLoading] = useState(false);
   const [activeType, setActiveType] = useState('');
@@ -26,18 +36,14 @@ export function AIAssistant({ content, title }: AIAssistantProps) {
     setResults((prev) => [{ type, label, content }, ...prev.filter((r) => r.type !== type)]);
   };
 
-  const handleAction = async (type: string, action: () => Promise<string | string[]>) => {
+  const handleAction = async (type: string, action: () => Promise<string>) => {
     setLoading(true);
     setActiveType(type);
     try {
       const result = await action();
-      if (Array.isArray(result)) {
-        addResult(type, getLabel(type), result.join('、'));
-      } else {
-        addResult(type, getLabel(type), result);
-      }
+      addResult(type, getLabel(type), result);
     } catch (error) {
-      addResult(type, getLabel(type), '请求失败，请稍后重试');
+      addResult(type, getLabel(type), '请求失败: ' + (error instanceof Error ? error.message : '未知错误'));
     }
     setLoading(false);
     setActiveType('');
@@ -57,6 +63,35 @@ export function AIAssistant({ content, title }: AIAssistantProps) {
     { type: 'titles', label: '标题建议', icon: '💡', color: 'pink' },
   ];
 
+  const handlePolish = () => handleAction('polish', () =>
+    callAIHelper('glm-5.1', `请润色以下旅游博客文章，使其更生动、更有感染力，保持原文意思和格式不变：\n\n${content}`, 0.7)
+  );
+
+  const handleSummary = () => handleAction('summary', () =>
+    callAIHelper('glm-5.1', `请为以下文章生成一段简短的摘要（100字以内）：\n\n${content}`, 0.3)
+  );
+
+  const handleSEO = () => handleAction('seo', () =>
+    callAIHelper('deepseek-v4', `为以下文章生成SEO友好的Meta描述（160字以内），标题：${title || ''}\n\n内容：${content.substring(0, 500)}`, 0.3)
+  );
+
+  const handleKeywords = () => handleAction('keywords', async () => {
+    const result = await callAIHelper('glm-5.1', `提取以下文章的5-10个关键词，用逗号分隔，只返回关键词不要其他内容：\n\n${content}`, 0.2);
+    return result.includes('配置 API 密钥') ? result : result.split(/[,，]/).map((k) => k.trim()).filter(Boolean).join('、');
+  });
+
+  const handleTitles = () => handleAction('titles', () =>
+    callAIHelper('mimo-v2', `为以下文章生成3个更有吸引力的标题建议，每行一个，只返回标题不要序号和其他内容：\n原标题：${title || ''}\n\n内容摘要：${content.substring(0, 300)}`, 0.8)
+  );
+
+  const handlers: Record<string, () => void> = {
+    polish: handlePolish,
+    summary: handleSummary,
+    seo: handleSEO,
+    keywords: handleKeywords,
+    titles: handleTitles,
+  };
+
   return (
     <div className="fixed bottom-4 right-4 z-50">
       <button
@@ -64,7 +99,7 @@ export function AIAssistant({ content, title }: AIAssistantProps) {
         className={cn(
           'w-12 h-12 rounded-full shadow-lg transition-all flex items-center justify-center text-xl',
           showPanel
-            ? 'bg-gray-600 text-white rotate-0'
+            ? 'bg-gray-600 text-white'
             : 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-110'
         )}
       >
@@ -82,16 +117,7 @@ export function AIAssistant({ content, title }: AIAssistantProps) {
             {actions.map((action) => (
               <button
                 key={action.type}
-                onClick={() => {
-                  const handlers: Record<string, () => Promise<string | string[]>> = {
-                    polish: () => polishArticle(content),
-                    summary: () => generateSummary(content),
-                    seo: () => generateSEODescription(title || '', content),
-                    keywords: async () => (await extractKeywords(content)).join('、'),
-                    titles: async () => (await suggestTitles(title || '', content)).join('\n'),
-                  };
-                  handleAction(action.type, handlers[action.type]);
-                }}
+                onClick={() => handlers[action.type]()}
                 disabled={loading}
                 className={cn(
                   'px-3 py-2 text-xs rounded-lg transition-colors disabled:opacity-50 text-left',
