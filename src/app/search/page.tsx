@@ -40,6 +40,8 @@ export default function SearchPage() {
       />
       {loading ? (
         <p className="text-gray-500 dark:text-gray-400">加载中...</p>
+      ) : filteredPosts.length === 0 && query.trim() ? (
+        <p className="text-gray-500 dark:text-gray-400">未找到相关文章</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPosts.map((post) => (

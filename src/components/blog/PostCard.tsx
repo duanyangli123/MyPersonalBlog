@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import type { Post } from '@/types';
 
 interface PostCardProps {
@@ -26,7 +26,7 @@ export function PostCard({ post, className }: PostCardProps) {
       )}
       <div className="p-5">
         <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-2">
-          <time dateTime={post.date}>{post.date}</time>
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
           <span>·</span>
           <span>{post.readingTime}</span>
         </div>

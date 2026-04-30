@@ -2,12 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-
-interface TocItem {
-  id: string;
-  text: string;
-  level: number;
-}
+import type { TocItem } from '@/types';
 
 interface TableOfContentsProps {
   items: TocItem[];

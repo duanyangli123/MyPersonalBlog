@@ -1,6 +1,5 @@
 import { getPosts } from '@/lib/posts';
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://travel-blog.vercel.app';
+import { siteConfig } from '@/lib/config';
 
 export async function GET() {
   const posts = await getPosts();
@@ -10,8 +9,8 @@ export async function GET() {
       (post) => `    <item>
       <title>${escapeXml(post.title)}</title>
       <description>${escapeXml(post.description)}</description>
-      <link>${siteUrl}/posts/${post.slug}</link>
-      <guid isPermaLink="true">${siteUrl}/posts/${post.slug}</guid>
+      <link>${siteConfig.url}/posts/${post.slug}</link>
+      <guid isPermaLink="true">${siteConfig.url}/posts/${post.slug}</guid>
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
       ${post.tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join('\n      ')}
     </item>`
@@ -21,12 +20,12 @@ export async function GET() {
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>旅游博客</title>
-    <description>分享旅游风景、攻略和旅行故事的个人博客</description>
-    <link>${siteUrl}</link>
+    <title>${siteConfig.name}</title>
+    <description>${siteConfig.description}</description>
+    <link>${siteConfig.url}</link>
     <language>zh-CN</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="${siteConfig.url}/feed.xml" rel="self" type="application/rss+xml" />
 ${rssItems}
   </channel>
 </rss>`;

@@ -4,19 +4,20 @@ import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
+import { siteConfig } from '@/lib/config';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: '旅游博客 - 记录每一次旅行',
-    template: '%s | 旅游博客',
+    default: `${siteConfig.name} - 记录每一次旅行`,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: '分享旅游风景、攻略和旅行故事的个人博客',
+  description: siteConfig.description,
   openGraph: {
     type: 'website',
     locale: 'zh_CN',
-    siteName: '旅游博客',
+    siteName: siteConfig.name,
   },
   twitter: {
     card: 'summary_large_image',
@@ -24,6 +25,11 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    types: {
+      'application/rss+xml': `${siteConfig.url}/feed.xml`,
+    },
   },
 };
 

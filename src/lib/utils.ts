@@ -1,5 +1,8 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import type { TocItem } from '@/types';
+
+export type { TocItem };
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -22,20 +25,21 @@ export function slugify(text: string): string {
     .toLowerCase();
 }
 
-export interface TocItem {
-  id: string;
-  text: string;
-  level: number;
-}
-
 export function extractToc(content: string): TocItem[] {
   const headingRegex = /^(#{2,3})\s+(.+)$/gm;
   const items: TocItem[] = [];
+  const slugCounts = new Map<string, number>();
   let match;
+
   while ((match = headingRegex.exec(content)) !== null) {
     const level = match[1].length;
     const text = match[2].trim();
-    const id = slugify(text);
+    let id = slugify(text);
+
+    const count = slugCounts.get(id) || 0;
+    slugCounts.set(id, count + 1);
+    if (count > 0) id = `${id}-${count}`;
+
     items.push({ id, text, level });
   }
   return items;

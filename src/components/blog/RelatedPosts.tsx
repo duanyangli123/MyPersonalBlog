@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Post } from '@/types';
 
 interface RelatedPostsProps {
@@ -34,10 +35,12 @@ export function RelatedPosts({ currentSlug, posts }: RelatedPostsProps) {
           >
             {post.coverImage && (
               <div className="relative h-32 overflow-hidden">
-                <img
+                <Image
                   src={post.coverImage}
                   alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, 33vw"
                 />
               </div>
             )}
