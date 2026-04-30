@@ -72,11 +72,11 @@ export function AIAssistant({ content, title }: AIAssistantProps) {
   ];
 
   const handlePolish = () => handleAction('polish', () =>
-    callAIHelper('glm-5.1', `请润色以下旅游博客文章，使其更生动、更有感染力，保持原文意思和格式不变：\n\n${content}`, 0.7)
+    callAIHelper('mimo-v2', `请润色以下旅游博客文章，使其更生动、更有感染力，保持原文意思和格式不变：\n\n${content}`, 0.7)
   );
 
   const handleSummary = () => handleAction('summary', () =>
-    callAIHelper('glm-5.1', `请为以下文章生成一段简短的摘要（100字以内）：\n\n${content}`, 0.3)
+    callAIHelper('mimo-v2', `请为以下文章生成一段简短的摘要（100字以内）：\n\n${content}`, 0.3)
   );
 
   const handleSEO = () => handleAction('seo', () =>
@@ -84,12 +84,12 @@ export function AIAssistant({ content, title }: AIAssistantProps) {
   );
 
   const handleKeywords = () => handleAction('keywords', async () => {
-    const result = await callAIHelper('glm-5.1', `提取以下文章的5-10个关键词，用逗号分隔，只返回关键词不要其他内容：\n\n${content}`, 0.2);
+    const result = await callAIHelper('mimo-v2', `提取以下文章的5-10个关键词，用逗号分隔，只返回关键词不要其他内容：\n\n${content}`, 0.2);
     return result.includes('配置 API 密钥') ? result : result.split(/[,，]/).map((k) => k.trim()).filter(Boolean).join('、');
   });
 
   const handleTitles = () => handleAction('titles', () =>
-    callAIHelper('mimo-v2', `为以下文章生成3个更有吸引力的标题建议，每行一个，只返回标题不要序号和其他内容：\n原标题：${title || ''}\n\n内容摘要：${content.substring(0, 300)}`, 0.8)
+    callAIHelper('mimo-v2-pro', `为以下文章生成3个更有吸引力的标题建议，每行一个，只返回标题不要序号和其他内容：\n原标题：${title || ''}\n\n内容摘要：${content.substring(0, 300)}`, 0.8)
   );
 
   const handlers: Record<string, () => void> = {
