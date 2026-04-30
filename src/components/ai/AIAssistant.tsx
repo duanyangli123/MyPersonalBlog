@@ -15,14 +15,22 @@ interface AIResult {
 }
 
 async function callAIHelper(model: string, prompt: string, temperature = 0.7): Promise<string> {
-  const res = await fetch('/api/ai', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model, prompt, temperature }),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'AI request failed');
-  return data.content;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 90000);
+
+  try {
+    const res = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, prompt, temperature }),
+      signal: controller.signal,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'AI request failed');
+    return data.content;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export function AIAssistant({ content, title }: AIAssistantProps) {

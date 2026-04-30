@@ -66,7 +66,7 @@ export async function callAI(request: AIRequest): Promise<AIResponse> {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
+  const timeout = setTimeout(() => controller.abort(), 60000);
 
   try {
     if (config.protocol === 'anthropic') {
