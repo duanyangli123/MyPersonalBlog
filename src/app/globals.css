@@ -33,6 +33,12 @@ body {
 
 .prose img {
   border-radius: 0.5rem;
+  cursor: zoom-in;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.prose img:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
 @media (max-width: 640px) {
