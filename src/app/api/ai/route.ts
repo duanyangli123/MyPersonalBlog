@@ -41,7 +41,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('AI API route error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'AI request failed' },
+      { error: 'AI 服务暂时不可用，请稍后重试' },
       { status: 500 }
     );
   }

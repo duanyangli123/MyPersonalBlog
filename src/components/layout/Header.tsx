@@ -56,7 +56,7 @@ export function Header() {
             🔍 搜索
           </Link>
           <a
-            href="/feed.xml"
+            href="/feed"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"

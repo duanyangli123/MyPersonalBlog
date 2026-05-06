@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense } from 'react';
 import { CommentSection } from '@/components/blog/CommentSection';
 import { AIAssistant } from '@/components/ai/AIAssistant';
 import { ImageViewer } from '@/components/ui/ImageViewer';
@@ -11,30 +11,16 @@ interface PostDetailClientProps {
   title?: string;
 }
 
+function PostDetailFallback() {
+  return <div className="h-20 animate-pulse bg-gray-100 dark:bg-gray-800 rounded-lg mt-8" />;
+}
+
 export function PostDetailClient({ slug, content, title }: PostDetailClientProps) {
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.classList.contains('code-copy-btn')) return;
-
-      const pre = target.closest('pre');
-      const code = pre?.querySelector('code');
-      if (!code) return;
-
-      navigator.clipboard.writeText(code.textContent || '');
-      target.textContent = '已复制';
-      setTimeout(() => { target.textContent = '复制'; }, 2000);
-    };
-
-    document.addEventListener('click', handler);
-    return () => document.removeEventListener('click', handler);
-  }, []);
-
   return (
-    <>
+    <Suspense fallback={<PostDetailFallback />}>
       <CommentSection slug={slug} />
       <AIAssistant content={content} title={title} />
       <ImageViewer />
-    </>
+    </Suspense>
   );
 }

@@ -34,8 +34,7 @@ async function callAIHelper(model: string, prompt: string, temperature = 0.7): P
 }
 
 export function AIAssistant({ content, title }: AIAssistantProps) {
-  const [loading, setLoading] = useState(false);
-  const [activeType, setActiveType] = useState('');
+  const [loadingTypes, setLoadingTypes] = useState<Set<string>>(new Set());
   const [results, setResults] = useState<AIResult[]>([]);
   const [showPanel, setShowPanel] = useState(false);
   const [copied, setCopied] = useState('');
@@ -45,16 +44,19 @@ export function AIAssistant({ content, title }: AIAssistantProps) {
   };
 
   const handleAction = async (type: string, action: () => Promise<string>) => {
-    setLoading(true);
-    setActiveType(type);
+    setLoadingTypes((prev) => new Set(prev).add(type));
     try {
       const result = await action();
       addResult(type, getLabel(type), result);
     } catch (error) {
       addResult(type, getLabel(type), '请求失败: ' + (error instanceof Error ? error.message : '未知错误'));
+    } finally {
+      setLoadingTypes((prev) => {
+        const next = new Set(prev);
+        next.delete(type);
+        return next;
+      });
     }
-    setLoading(false);
-    setActiveType('');
   };
 
   const handleCopy = (text: string, type: string) => {
@@ -101,7 +103,7 @@ export function AIAssistant({ content, title }: AIAssistantProps) {
   };
 
   return (
-    <div className="fixed bottom-16 right-4 z-50">
+    <div className="fixed bottom-4 right-16 z-50">
       <button
         onClick={() => setShowPanel(!showPanel)}
         className={cn(
@@ -126,14 +128,14 @@ export function AIAssistant({ content, title }: AIAssistantProps) {
               <button
                 key={action.type}
                 onClick={() => handlers[action.type]()}
-                disabled={loading}
+                disabled={loadingTypes.has(action.type)}
                 className={cn(
                   'px-3 py-2 text-xs rounded-lg transition-colors disabled:opacity-50 text-left',
                   getColorClasses(action.color),
-                  loading && activeType === action.type && 'animate-pulse'
+                  loadingTypes.has(action.type) && 'animate-pulse'
                 )}
               >
-                {action.icon} {loading && activeType === action.type ? '处理中...' : action.label}
+                {action.icon} {loadingTypes.has(action.type) ? '处理中...' : action.label}
               </button>
             ))}
           </div>

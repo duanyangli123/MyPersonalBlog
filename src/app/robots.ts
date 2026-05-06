@@ -1,8 +1,7 @@
 import { MetadataRoute } from 'next';
+import { siteConfig } from '@/lib/config';
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://travel-blog.vercel.app';
-
   return {
     rules: [
       {
@@ -10,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: `${siteConfig.url}/sitemap.xml`,
   };
 }

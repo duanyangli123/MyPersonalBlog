@@ -10,6 +10,8 @@ import { PostNavigation } from '@/components/blog/PostNavigation';
 import { ViewCount } from '@/components/blog/ViewCount';
 import { JsonLd } from '@/components/blog/JsonLd';
 import { ShareButtons } from '@/components/blog/ShareButtons';
+import { siteConfig } from '@/lib/config';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import Link from 'next/link';
 import Image from 'next/image';
 import remarkGfm from 'remark-gfm';
@@ -26,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = await getPostBySlug(slug);
   if (!post) return {};
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://travel-blog.vercel.app';
+  const siteUrl = siteConfig.url;
 
   return {
     title: `${post.title} | 旅游博客`,
@@ -130,7 +132,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           )}
         </div>
 
-        <PostDetailClient slug={post.slug} content={post.content} title={post.title} />
+        <ErrorBoundary>
+          <PostDetailClient slug={post.slug} content={post.content} title={post.title} />
+        </ErrorBoundary>
 
         <PostNavigation prev={prev} next={next} />
 

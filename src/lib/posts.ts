@@ -85,3 +85,26 @@ export async function searchPosts(query: string): Promise<Post[]> {
       post.tags.some((tag) => tag.toLowerCase().includes(q))
   );
 }
+
+export async function getPostsByPage(page: number, limit = 9): Promise<{ posts: Post[]; total: number; totalPages: number; currentPage: number }> {
+  const allPosts = await readPosts();
+  const total = allPosts.length;
+  const totalPages = Math.ceil(total / limit);
+  const currentPage = Math.max(1, Math.min(page, totalPages || 1));
+  const start = (currentPage - 1) * limit;
+  const posts = allPosts.slice(start, start + limit);
+  return { posts, total, totalPages, currentPage };
+}
+
+export async function getPostsByTagAndPage(tag: string, page: number, limit = 9): Promise<{ posts: Post[]; total: number; totalPages: number; currentPage: number }> {
+  const allPosts = await readPosts();
+  const filtered = allPosts.filter((post) => post.tags.includes(tag));
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / limit);
+  const currentPage = Math.max(1, Math.min(page, totalPages || 1));
+  const start = (currentPage - 1) * limit;
+  const posts = filtered.slice(start, start + limit);
+  return { posts, total, totalPages, currentPage };
+}
+
+export type { Post };

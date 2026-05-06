@@ -1,13 +1,12 @@
 import { MetadataRoute } from 'next';
 import { getPosts } from '@/lib/posts';
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://travel-blog.vercel.app';
+import { siteConfig } from '@/lib/config';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getPosts();
 
   const postsEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${siteUrl}/posts/${post.slug}`,
+    url: `${siteConfig.url}/posts/${post.slug}`,
     lastModified: new Date(post.date),
     changeFrequency: 'weekly',
     priority: 0.8,
@@ -15,25 +14,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPages: MetadataRoute.Sitemap = [
     {
-      url: siteUrl,
+      url: siteConfig.url,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
     },
     {
-      url: `${siteUrl}/posts`,
+      url: `${siteConfig.url}/posts`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/tags`,
+      url: `${siteConfig.url}/tags`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.5,
     },
     {
-      url: `${siteUrl}/about`,
+      url: `${siteConfig.url}/about`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.3,

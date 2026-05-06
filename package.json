@@ -13,7 +13,6 @@
     "@giscus/react": "^3.1.0",
     "@tailwindcss/typography": "^0.5.19",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.38.0",
     "gray-matter": "^4.0.3",
     "next": "16.2.4",
     "next-mdx-remote": "^6.0.0",
