@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === '/admin/login' || pathname.startsWith('/api/admin/auth')) {
@@ -15,7 +15,9 @@ export async function middleware(request: NextRequest) {
       if (pathname.startsWith('/api/admin')) {
         return NextResponse.json({ error: '未授权' }, { status: 401 });
       }
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+      const loginUrl = new URL('/admin/login', request.url);
+      loginUrl.searchParams.set('from', pathname);
+      return NextResponse.redirect(loginUrl);
     }
   }
 
@@ -23,5 +25,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/admin/:path*', '/admin', '/api/admin/:path*', '/api/admin'],
 };
