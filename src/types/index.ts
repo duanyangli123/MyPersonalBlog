@@ -8,6 +8,7 @@ export interface Post {
   coverImage?: string;
   readingTime: string;
   content: string;
+  draft?: boolean;
 }
 
 export interface Tag {
