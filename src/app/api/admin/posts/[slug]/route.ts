@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPostBySlug, updatePost, deletePost } from '@/lib/posts';
+import { requireAdmin } from '@/lib/auth';
 import { z } from 'zod';
 
 const updateSchema = z.object({
@@ -15,6 +16,9 @@ const updateSchema = z.object({
 
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const { slug } = await params;
     const post = await getPostBySlug(slug);
     if (!post) return NextResponse.json({ error: '文章不存在' }, { status: 404 });
@@ -26,6 +30,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
 
 export async function PUT(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const { slug } = await params;
     const body = await request.json();
     const result = updateSchema.safeParse(body);
@@ -46,6 +53,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ slug
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const { slug } = await params;
     const existing = await getPostBySlug(slug);
     if (!existing) return NextResponse.json({ error: '文章不存在' }, { status: 404 });

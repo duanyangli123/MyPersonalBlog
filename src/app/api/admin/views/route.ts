@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getAllViews } from '@/lib/views';
 import { getAllPostsAdmin } from '@/lib/posts';
+import { requireAdmin } from '@/lib/auth';
 
 export async function GET() {
   try {
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const views = await getAllViews();
     const posts = await getAllPostsAdmin();
 

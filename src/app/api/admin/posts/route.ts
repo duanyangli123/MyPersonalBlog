@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAllPostsAdmin, createPost } from '@/lib/posts';
+import { requireAdmin } from '@/lib/auth';
 import { z } from 'zod';
 
 const postSchema = z.object({
@@ -16,6 +17,9 @@ const postSchema = z.object({
 
 export async function GET(request: Request) {
   try {
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '15', 10);
@@ -61,6 +65,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const body = await request.json();
     const result = postSchema.safeParse(body);
 

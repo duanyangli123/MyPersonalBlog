@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import { requireAdmin } from '@/lib/auth';
 
 const IMAGES_DIR = path.join(process.cwd(), 'public/images');
 
 export async function GET() {
   try {
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const files = await fs.readdir(IMAGES_DIR);
     const images = await Promise.all(
       files
@@ -29,6 +33,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const formData = await request.formData();
     const files = formData.getAll('files') as File[];
 
@@ -53,6 +60,9 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const { searchParams } = new URL(request.url);
     const filename = searchParams.get('file');
     if (!filename) return NextResponse.json({ error: '文件名不能为空' }, { status: 400 });
