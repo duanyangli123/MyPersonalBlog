@@ -107,4 +107,42 @@ export async function getPostsByTagAndPage(tag: string, page: number, limit = 9)
   return { posts, total, totalPages, currentPage };
 }
 
+export async function getPostsByCategory(category: string): Promise<Post[]> {
+  const posts = await readPosts();
+  return posts.filter((post) => post.category === category);
+}
+
+export async function getAllCategories(): Promise<{ name: string; count: number }[]> {
+  const posts = await readPosts();
+  const catMap = new Map<string, number>();
+  posts.forEach((post) => {
+    catMap.set(post.category, (catMap.get(post.category) || 0) + 1);
+  });
+  return Array.from(catMap.entries())
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+export async function getArchive(): Promise<{ year: number; month: number; posts: Post[] }[]> {
+  const posts = await readPosts();
+  const map = new Map<string, Post[]>();
+  posts.forEach((post) => {
+    const d = new Date(post.date);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    if (!map.has(key)) map.set(key, []);
+    map.get(key)!.push(post);
+  });
+  return Array.from(map.entries())
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([key, posts]) => {
+      const [y, m] = key.split('-').map(Number);
+      return { year: y, month: m, posts };
+    });
+}
+
+export async function getRandomPost(): Promise<Post> {
+  const posts = await readPosts();
+  return posts[Math.floor(Math.random() * posts.length)];
+}
+
 export type { Post };

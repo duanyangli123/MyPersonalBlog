@@ -10,6 +10,11 @@ import { PostNavigation } from '@/components/blog/PostNavigation';
 import { ViewCount } from '@/components/blog/ViewCount';
 import { JsonLd } from '@/components/blog/JsonLd';
 import { ShareButtons } from '@/components/blog/ShareButtons';
+import { BookmarkButton } from '@/components/blog/BookmarkButton';
+import { LikeButton } from '@/components/blog/LikeButton';
+import { StarRating } from '@/components/blog/StarRating';
+import { ReadingSettings } from '@/components/blog/ReadingSettings';
+import { ReadingHistoryTracker } from '@/components/blog/ReadingHistoryTracker';
 import { siteConfig } from '@/lib/config';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import Link from 'next/link';
@@ -107,8 +112,15 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               </Link>
             ))}
           </div>
-          <div className="mt-4">
+          <div className="flex items-center gap-2 mt-4">
             <ShareButtons title={post.title} slug={post.slug} />
+            <BookmarkButton post={post} />
+            <LikeButton slug={post.slug} />
+            <ReadingSettings />
+          </div>
+          <div className="mt-3">
+            <span className="text-xs text-gray-400 mr-2">评分</span>
+            <StarRating slug={post.slug} />
           </div>
         </header>
 
@@ -135,6 +147,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         <ErrorBoundary>
           <PostDetailClient slug={post.slug} content={post.content} title={post.title} />
         </ErrorBoundary>
+
+        <ReadingHistoryTracker post={post} />
 
         <PostNavigation prev={prev} next={next} />
 

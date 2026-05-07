@@ -7,6 +7,9 @@ import { useTheme } from 'next-themes';
 const navItems = [
   { href: '/', label: '首页' },
   { href: '/posts', label: '文章' },
+  { href: '/categories', label: '分类' },
+  { href: '/archive', label: '归档' },
+  { href: '/gallery', label: '相册' },
   { href: '/tags', label: '标签' },
   { href: '/about', label: '关于' },
 ];
@@ -39,7 +42,7 @@ export function Header() {
           🌏 旅游博客
         </Link>
         
-        <nav className="hidden md:flex items-center gap-4">
+        <nav className="hidden lg:flex items-center gap-3">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -49,6 +52,18 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <Link
+            href="/bookmarks"
+            className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
+            ❤️ 收藏
+          </Link>
+          <Link
+            href="/history"
+            className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
+            📖 历史
+          </Link>
           <Link
             href="/search"
             className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -66,7 +81,7 @@ export function Header() {
           <ThemeToggle />
         </nav>
 
-        <div className="md:hidden flex items-center gap-2">
+        <div className="lg:hidden flex items-center gap-2">
           <ThemeToggle />
           <button
             className="p-2 text-gray-600 dark:text-gray-300"
@@ -78,7 +93,7 @@ export function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <nav className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+        <nav className="lg:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 max-h-[70vh] overflow-y-auto">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -89,6 +104,20 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <Link
+            href="/bookmarks"
+            className="block px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            ❤️ 收藏
+          </Link>
+          <Link
+            href="/history"
+            className="block px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            📖 历史
+          </Link>
           <Link
             href="/search"
             className="block px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
