@@ -14,7 +14,7 @@ export function JsonLd({ post }: JsonLdProps) {
     datePublished: post.date,
     keywords: post.tags.join(', '),
     url: `${siteConfig.url}/posts/${post.slug}`,
-    image: post.coverImage || undefined,
+    image: post.coverImage ? (post.coverImage.startsWith('/') ? `${siteConfig.url}${post.coverImage}` : post.coverImage) : undefined,
     author: {
       '@type': 'Person',
       name: siteConfig.author,
