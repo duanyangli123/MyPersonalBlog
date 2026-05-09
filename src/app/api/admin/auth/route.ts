@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { signToken, verifyPassword, getCookieName, getTokenExpiry } from '@/lib/auth';
+import { signToken, verifyPassword } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
@@ -15,13 +15,14 @@ export async function POST(request: Request) {
     }
 
     const token = await signToken({ admin: true });
+    const isProd = process.env.NODE_ENV === 'production';
 
     const response = NextResponse.json({ success: true });
-    response.cookies.set(getCookieName(), token, {
+    response.cookies.set('admin_token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProd,
       sameSite: 'lax',
-      maxAge: getTokenExpiry() / 1000,
+      maxAge: 86400,
       path: '/',
     });
 
