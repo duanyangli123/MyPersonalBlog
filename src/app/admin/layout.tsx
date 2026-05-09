@@ -1,11 +1,17 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 
-export const metadata = {
-  title: '管理后台 | 旅游博客',
-};
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === '/admin/login';
+
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
   return (
     <AdminGuard>
       <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">

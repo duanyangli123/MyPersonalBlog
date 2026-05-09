@@ -1,13 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +22,7 @@ export default function AdminLoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push('/admin');
+        window.location.href = '/admin';
       } else {
         setError(data.error || '登录失败');
       }
@@ -57,7 +55,9 @@ export default function AdminLoginPage() {
           </div>
 
           {error && (
-            <p className="text-sm text-red-500 text-center">{error}</p>
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+              <p className="text-sm text-red-500 text-center">{error}</p>
+            </div>
           )}
 
           <button
@@ -68,6 +68,10 @@ export default function AdminLoginPage() {
             {loading ? '验证中...' : '登录'}
           </button>
         </form>
+
+        <p className="text-xs text-gray-400 text-center mt-6">
+          <a href="/" className="hover:text-blue-500">← 返回博客首页</a>
+        </p>
       </div>
     </div>
   );
