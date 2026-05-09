@@ -1,13 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 export function AdminGuard({ children }: { children: React.ReactNode }) {
   const [ok, setOk] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
+    if (pathname === '/admin/login') {
+      setOk(true);
+      return;
+    }
     const token = document.cookie
       .split('; ')
       .find((c) => c.startsWith('admin_token='));
@@ -16,7 +21,7 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
     } else {
       router.replace('/admin/login');
     }
-  }, [router]);
+  }, [router, pathname]);
 
   if (!ok) {
     return (
