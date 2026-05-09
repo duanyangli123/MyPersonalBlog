@@ -21,22 +21,14 @@ export default function AdminLoginPage() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        setError(data.error || '登录失败');
-        setLoading(false);
-        return;
-      }
-
-      const hasCookie = document.cookie.includes('admin_token=');
-
-      if (hasCookie) {
+      if (res.ok) {
         window.location.replace('/admin');
       } else {
-        setError('Cookie 设置失败，请刷新页面重试');
-        setLoading(false);
+        setError(data.error || '登录失败');
       }
     } catch {
       setError('网络错误');
+    } finally {
       setLoading(false);
     }
   };
