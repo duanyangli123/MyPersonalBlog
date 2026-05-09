@@ -8,20 +8,20 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  const isLoginPage = pathname === '/admin/login';
+
   useEffect(() => {
-    if (pathname === '/admin/login') {
+    if (isLoginPage) {
       setOk(true);
       return;
     }
-    const token = document.cookie
-      .split('; ')
-      .find((c) => c.startsWith('admin_token='));
-    if (token) {
+    const hasToken = document.cookie.includes('admin_token=');
+    if (hasToken) {
       setOk(true);
     } else {
       router.replace('/admin/login');
     }
-  }, [router, pathname]);
+  }, [router, isLoginPage]);
 
   if (!ok) {
     return (
